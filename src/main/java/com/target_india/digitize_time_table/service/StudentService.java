@@ -68,8 +68,7 @@ public class StudentService {
 
     public String addStudent(Student student) {
         studentDao.addStudent(student);
-        String result = "Successfully added student";
-        return result;
+        return "Successfully added student";
 
     }
     public String updateStudent(Student student){

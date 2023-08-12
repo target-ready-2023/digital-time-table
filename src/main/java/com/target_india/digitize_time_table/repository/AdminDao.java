@@ -31,49 +31,6 @@ public class AdminDao{
         this.connection = connection;
     }
 
-    public ResultSet findCourseByClassId(int classId){
-        ResultSet resultSet=null;
-        try {
-            String query = "select course_table.course_id,course_table.course_name,instructor_table.instructor_name " +
-                    "from course_table " +
-                    "inner join instructor_table on course_table.instructor_id = instructor_table.instructor_id " +
-                    "where course_table.class_id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, classId);
-            resultSet = preparedStatement.executeQuery();
-            return resultSet;
-        }catch (SQLException exception) {
-            logger.error(String.valueOf(exception));
-        }
-        return resultSet;
-    }
-
-    public ResultSet findClassInfo(int classId){
-        ResultSet resultSet=null;
-        try {
-            String query = "select * from class_table where class_id = ?";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, classId);
-            resultSet = preparedStatement.executeQuery();
-            return resultSet;
-        }catch (SQLException exception) {
-            logger.error(String.valueOf(exception));
-        }
-        return resultSet;
-    }
-
-    public ResultSet findAllClassInfo(){
-        ResultSet resultSet=null;
-        try {
-            String query = "select * from class_table ";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            resultSet = preparedStatement.executeQuery();
-            return resultSet;
-        }catch (SQLException exception) {
-            logger.error(String.valueOf(exception));
-        }
-        return resultSet;
-    }
 
     public ResultSet findAllAdmins() {
         ResultSet resultSet = null;

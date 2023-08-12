@@ -6,6 +6,7 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 
 @NoArgsConstructor
@@ -15,7 +16,6 @@ import lombok.NoArgsConstructor;
 public class Instructor {
     @Id
     private int instructorId;
-
     private String instructorName;
     private String instructorContact;
 }

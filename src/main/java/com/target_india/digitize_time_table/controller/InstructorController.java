@@ -6,6 +6,7 @@ import com.target_india.digitize_time_table.service.InstructorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -41,8 +42,8 @@ public class InstructorController {
         return new ResponseEntity<>(String.valueOf(Optional.of(instructor)),HttpStatus.CREATED);
     }
 
-    @PostMapping("")
-    public ResponseEntity<String> addInstructor(@RequestBody Instructor instructor) {
+    @PostMapping
+    public ResponseEntity<String> addInstructor( @RequestBody Instructor instructor) {
         instructorService.addInstructor(instructor);
         return new ResponseEntity<>("Instructor added successfully", HttpStatus.CREATED);
     }

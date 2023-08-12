@@ -19,39 +19,16 @@ public class LoginController {
     //private static final Logger logger = LoggerFactory.getLogger(LoginController.class);
 
     private final LoginService loginService;
-//
-//    @Value("${spring.datasource.url}")
-//    public String url;
-//
-//    @Value("${spring.datasource.username}")
-//    public String username;
-//
-//    @Value("${spring.datasource.password}")
-//    public String password;
-//
-//
-
 
     @Autowired
     public LoginController(LoginService loginService) {
         this.loginService = loginService;
     }
 
-//    @GetMapping("")
-//    public ResponseEntity<List> getinfo(){
-//        DbSettings dbSettings = new DbSettings();
-//        dbSettings.setPassword(password);
-//        dbSettings.setUrl(url);
-//        dbSettings.setUsername(username);
-//
-//        return new ResponseEntity<>(dbSettings.getDbInfo(), HttpStatus.CREATED);
-//    }
     @GetMapping("/{role}/{id}")
     public ResponseEntity<String> login(@PathVariable String role, @PathVariable int id){
-        String result = loginService.login(role, id);
-        if(result.equals("login successful")){
-            return new ResponseEntity<>(result, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(result, HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(loginService.login(role, id), HttpStatus.OK);
+
     }
 }

@@ -17,5 +17,4 @@ public class Course {
     private String courseName;
     private int classId;
     private int instructorId;
-
 }

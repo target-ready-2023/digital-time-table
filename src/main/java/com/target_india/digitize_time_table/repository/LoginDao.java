@@ -30,8 +30,7 @@ public class LoginDao {
     }
 
     public int checkStudentById(int id) {
-        try{
-            ResultSet resultSet = studentDao.findStudentById(id);
+        try(ResultSet resultSet = studentDao.findStudentById(id)){
             if(resultSet.next()){
                 return 1;
             }
@@ -45,8 +44,7 @@ public class LoginDao {
         return 0;
     }
     public int checkInstructorById(int id) {
-        try{
-            ResultSet resultSet = instructorDao.findInstructorById(id);
+        try(ResultSet resultSet = instructorDao.findInstructorById(id)){
             if(resultSet.next()){
                 return 1;
             }
@@ -60,8 +58,7 @@ public class LoginDao {
         return 0;
     }
     public int checkAdminById(int id) {
-        try{
-            ResultSet resultSet = adminDao.findAdminById(id);
+        try(ResultSet resultSet = adminDao.findAdminById(id)){
             if(resultSet.next()){
                 return 1;
             }

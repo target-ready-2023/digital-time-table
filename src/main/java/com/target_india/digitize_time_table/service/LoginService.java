@@ -1,5 +1,7 @@
 package com.target_india.digitize_time_table.service;
 
+import com.target_india.digitize_time_table.exceptions.InvalidRoleException;
+import com.target_india.digitize_time_table.exceptions.ResourceNotFoundException;
 import com.target_india.digitize_time_table.repository.LoginDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,16 +18,15 @@ public class LoginService {
     }
 
     public String login(String role, int id) {
-        int result;
-        if(role.equals("student")){
-            result = loginDao.checkStudentById(id);
-        }
-        else if(role.equals("instructor")){
-            result = loginDao.checkInstructorById(id);
-        }
-        else{
-            result = loginDao.checkAdminById(id);
-        }
-        return (result==0) ? "No " + role + " found with id = "+id : "login successful";
+        int result = switch (role) {
+            case "student" -> loginDao.checkStudentById(id);
+            case "instructor" -> loginDao.checkInstructorById(id);
+            case "admin" -> loginDao.checkAdminById(id);
+            default -> throw new InvalidRoleException("No role found with name " + role);
+        };
+
+        if (result==0) throw new ResourceNotFoundException( "No " + role + " found with id "+id );
+
+        return "login successful";
     }
 }
