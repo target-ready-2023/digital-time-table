@@ -1,12 +1,14 @@
 package com.target_india.digitize_time_table.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.target_india.digitize_time_table.exceptions.ResourceNotFoundException;
 import com.target_india.digitize_time_table.model.Instructor;
 import com.target_india.digitize_time_table.repository.InstructorDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,10 +24,10 @@ public class InstructorService {
     }
 
 
-    public Optional<String> getAllInstructors() {
+    public List<Instructor> getAllInstructors() {
+        ResultSet resultSet = instructorDao.findAllInstructors();
+        List<Instructor> instructors = new ArrayList<Instructor>();
         try {
-            ResultSet resultSet = instructorDao.findAllInstructors();
-            List<Instructor> instructors = new ArrayList<Instructor>();
             while (resultSet.next()) {
                 int id = resultSet.getInt("instructor_id");
                 String name = resultSet.getString("instructor_name");
@@ -33,35 +35,33 @@ public class InstructorService {
                 Instructor instructor = new Instructor(id, name, contact);
                 instructors.add(instructor);
             }
-            if (instructors.isEmpty()) {
-                return Optional.empty();
+            if(instructors.isEmpty()){
+                throw new ResourceNotFoundException("No data found");
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jacksonData = objectMapper.writeValueAsString(instructors);
-            return Optional.of(jacksonData);
+            else{
+                return instructors;
+            }
         }
-        catch(Exception exception){
-            return Optional.empty();
+        catch(SQLException exception){ //sql exception
+            throw new ResourceNotFoundException(String.valueOf(exception));
         }
     }
 
-    public Optional<String> getInstructorById(int id) {
+    public Instructor getInstructorById(int id) {
+        ResultSet resultSet = instructorDao.findInstructorById(id);
+        Instructor instructor = new Instructor();
         try {
-            ResultSet resultSet = instructorDao.findInstructorById(id);
-            Instructor instructor = new Instructor();
             if (resultSet.next()) {
                 instructor.setInstructorId(resultSet.getInt(1));
                 instructor.setInstructorName(resultSet.getString(2));
                 instructor.setInstructorContact(resultSet.getString(3));
-            } else {
-                return Optional.empty();
+                return instructor;
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jacksonData = objectMapper.writeValueAsString(instructor);
-            return Optional.of(jacksonData);
-        }
-        catch(Exception exception){
-            return Optional.empty();
+            throw new ResourceNotFoundException( "No instructor found with id: "+id );
+
+
+        } catch (SQLException exception) {
+            throw new ResourceNotFoundException(String.valueOf(exception));
         }
     }
 
@@ -69,7 +69,6 @@ public class InstructorService {
         instructorDao.addInstructor(instructor);
         String result = "Successfully added instructor";
         return result;
-
     }
     public String updateInstructor(Instructor instructor){
         return instructorDao.updateInstructor(instructor);
@@ -78,7 +77,7 @@ public class InstructorService {
         return instructorDao.updateInstructor(id,name,contact);
     }
 
-    public int deleteInstructorById(int id) {
+    public String deleteInstructorById(int id) {
         return instructorDao.deleteInstructorById(id);
     }
 

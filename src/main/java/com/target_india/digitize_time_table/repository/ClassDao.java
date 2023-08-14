@@ -30,8 +30,8 @@ public class ClassDao {
 
     public ResultSet findClassInfo(int classId){
         ResultSet resultSet=null;
+        String query = "select * from class_table where class_id = ?";
         try {
-            String query = "select * from class_table where class_id = ?";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1, classId);
             resultSet = preparedStatement.executeQuery();
@@ -44,8 +44,8 @@ public class ClassDao {
 
     public ResultSet findAllClassInfo(){
         ResultSet resultSet=null;
+        String query = "select * from class_table ";
         try {
-            String query = "select * from class_table ";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             resultSet = preparedStatement.executeQuery();
             return resultSet;

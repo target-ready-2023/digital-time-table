@@ -1,6 +1,7 @@
 package com.target_india.digitize_time_table.repository;
 
 import com.target_india.digitize_time_table.config.DbConnection;
+import com.target_india.digitize_time_table.exceptions.ResourceNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,21 +31,23 @@ public class LoginDao {
     }
 
     public int checkStudentById(int id) {
-        try(ResultSet resultSet = studentDao.findStudentById(id)){
+        ResultSet resultSet = studentDao.findStudentById(id);
+        try{
             if(resultSet.next()){
                 return 1;
             }
             else{
                 return 0;
             }
+
         }
-        catch(Exception exception){
-            logger.error(String.valueOf(exception));
+        catch(SQLException exception){
+            throw new ResourceNotFoundException(String.valueOf(exception));
         }
-        return 0;
     }
     public int checkInstructorById(int id) {
-        try(ResultSet resultSet = instructorDao.findInstructorById(id)){
+        ResultSet resultSet = instructorDao.findInstructorById(id);
+        try{
             if(resultSet.next()){
                 return 1;
             }
@@ -52,13 +55,13 @@ public class LoginDao {
                 return 0;
             }
         }
-        catch(Exception exception){
-            logger.error(String.valueOf(exception));
+        catch(SQLException exception){
+            throw new ResourceNotFoundException( String.valueOf(exception));
         }
-        return 0;
     }
     public int checkAdminById(int id) {
-        try(ResultSet resultSet = adminDao.findAdminById(id)){
+        ResultSet resultSet = adminDao.findAdminById(id);
+        try{
             if(resultSet.next()){
                 return 1;
             }
@@ -66,10 +69,8 @@ public class LoginDao {
                 return 0;
             }
         }
-        catch(Exception exception){
-            logger.error(String.valueOf(exception));
+        catch(SQLException exception){
+            throw new ResourceNotFoundException(String.valueOf(exception));
         }
-        return 0;
     }
-
 }

@@ -6,9 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 @RestController
 @RequestMapping("students")
+@CrossOrigin(origins = "http://localhost:3000")
 public class StudentController {
     private final StudentService studentService;
 
@@ -18,39 +20,25 @@ public class StudentController {
     }
 
     @GetMapping
-    public ResponseEntity<String> getAllStudents(){
-        Optional<String> students = studentService.getAllStudents();
-        if (students.isEmpty()) {
-            return new ResponseEntity<>("No data found",HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(String.valueOf(Optional.of(students)), HttpStatus.CREATED);
+    public ResponseEntity<List<Student>> getAllStudents(){
+        return new ResponseEntity<>(studentService.getAllStudents(), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getStudentById(@PathVariable int id){
-        Optional<String> student = studentService.getStudentById(id);
-        if (student.isEmpty()){
-
-            return new ResponseEntity<>("No data found for student with ID="+id,HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(String.valueOf(Optional.of(student)),HttpStatus.CREATED);
+    public ResponseEntity<Student> getStudentById(@PathVariable int id){
+        return new ResponseEntity<>(studentService.getStudentById(id),HttpStatus.CREATED);
     }
 
     @PostMapping
     public ResponseEntity<String> addStudent(@RequestBody Student student) {
-        String result = studentService.addStudent(student);
+        studentService.addStudent(student);
         return new ResponseEntity<>("Student added successfully", HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/{name}/{class_id}/{contact}")
     public ResponseEntity<String> updateStudent(@PathVariable int id, @PathVariable String name, @PathVariable(name = "class_id") int classId, @PathVariable String contact) {
         String result = studentService.updateStudent(id, name, classId, contact);
-        if (result.isEmpty())
-            return new ResponseEntity<>("No student found with ID"+id+"to update",HttpStatus.CREATED);
-
         return ResponseEntity.ok(result);
-
     }
 
     @PutMapping
@@ -63,13 +51,8 @@ public class StudentController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable int id){
-        int deleted = studentService.deleteStudentById(id);
-        if(deleted == 1){
-
-            return new ResponseEntity<>("Successfully deleted student with ID="+id,HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>("No student found with ID="+id+ "to delete",HttpStatus.NOT_FOUND);
+        String deleted = studentService.deleteStudentById(id);
+        return new ResponseEntity<>(deleted,HttpStatus.NOT_FOUND);
     }
 
 

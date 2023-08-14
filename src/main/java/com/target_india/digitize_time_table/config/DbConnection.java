@@ -17,7 +17,7 @@ public class DbConnection {
 
 
     public Connection getDbConnection() {
-        String url ="jdbc:postgresql://localhost:5432/DigitizeTimeTable";
+        String url ="jdbc:postgresql://localhost:5433/DigitizeTimeTable";
         String username = "postgres";
         String password = "postgres@123";
 

@@ -1,12 +1,14 @@
 package com.target_india.digitize_time_table.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.target_india.digitize_time_table.exceptions.ResourceNotFoundException;
 import com.target_india.digitize_time_table.model.Student;
 import com.target_india.digitize_time_table.repository.StudentDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -21,10 +23,10 @@ public class StudentService {
         this.studentDao = studentDao;
     }
 
-    public Optional<String> getAllStudents() {
+    public List<Student> getAllStudents() {
+        ResultSet resultSet = studentDao.findAllStudents();
+        List<Student> students = new ArrayList<Student>();
         try {
-            ResultSet resultSet = studentDao.findAllStudents();
-            List<Student> students = new ArrayList<Student>();
             while (resultSet.next()) {
                 int id = resultSet.getInt("student_id");
                 String name = resultSet.getString("student_name");
@@ -34,35 +36,30 @@ public class StudentService {
                 students.add(student);
             }
             if (students.isEmpty()) {
-                return Optional.empty();
+                throw new ResourceNotFoundException("No data found");
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jacksonData = objectMapper.writeValueAsString(students);
-            return Optional.of(jacksonData);
+            return students;
         }
-        catch(Exception exception){
-            return Optional.empty();
+        catch(SQLException exception){
+            throw new ResourceNotFoundException(String.valueOf(exception));
         }
     }
 
-    public Optional<String> getStudentById(int id) {
+    public Student getStudentById(int id) {
+        ResultSet resultSet = studentDao.findStudentById(id);
+        Student student = new Student();
         try {
-            ResultSet resultSet = studentDao.findStudentById(id);
-            Student student = new Student();
             if (resultSet.next()) {
                 student.setStudentId(resultSet.getInt(1));
                 student.setStudentName(resultSet.getString(2));
                 student.setClassId(resultSet.getInt(3));
                 student.setStudentContact(resultSet.getString(4));
-            } else {
-                return Optional.empty();
+                return student;
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jacksonData = objectMapper.writeValueAsString(student);
-            return Optional.of(jacksonData);
+            throw new ResourceNotFoundException( "No instructor found with id: "+id );
         }
-        catch(Exception exception){
-            return Optional.empty();
+        catch(SQLException exception){
+            throw new ResourceNotFoundException(String.valueOf(exception));
         }
     }
 
@@ -78,7 +75,7 @@ public class StudentService {
         return studentDao.updateStudent(id,name,classId,contact);
     }
 
-    public int deleteStudentById(int id) {
+    public String deleteStudentById(int id) {
         return studentDao.deleteStudentById(id);
     }
 

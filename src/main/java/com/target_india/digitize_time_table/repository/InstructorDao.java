@@ -1,6 +1,8 @@
 package com.target_india.digitize_time_table.repository;
 
 import com.target_india.digitize_time_table.config.DbConnection;
+import com.target_india.digitize_time_table.exceptions.ResourceAlreadyExistException;
+import com.target_india.digitize_time_table.exceptions.ResourceNotFoundException;
 import com.target_india.digitize_time_table.model.Instructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,15 +54,13 @@ public class InstructorDao {
     }
 
 
+    //contact is already present?
     public void addInstructor(Instructor instructor) {
-
+        String query = "insert into instructor_table(instructor_name,contact) values(?,?)";
         try {
-            String query = "insert into instructor_table(instructor_id,instructor_name,contact) values(?,?,?)";
-
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1,instructor.getInstructorId());
-            preparedStatement.setString(3,instructor.getInstructorContact());
-            preparedStatement.setString(2,instructor.getInstructorName());
+            preparedStatement.setString(2,instructor.getInstructorContact());
+            preparedStatement.setString(1,instructor.getInstructorName());
             preparedStatement.executeUpdate();
         }
         catch(SQLException exception){
@@ -70,31 +70,31 @@ public class InstructorDao {
 
     public String updateInstructor(int id, String name, String contact){
         Statement statement;
+        ResultSet resultSet = findInstructorById(id);
         try{
-            ResultSet resultSet = findInstructorById(id);
             if(resultSet.next()){
+                if(resultSet.getString("contact").equals(contact)){
+                    throw new ResourceAlreadyExistException("This contact already exists!");
+                }
                 String query="update instructor_table " +
                         "set instructor_name='"+name+"', contact="+contact+" " +
                         "where instructor_id="+id+" ";
+
                 statement= connection.createStatement();
                 statement.executeUpdate(query);
                 return "Successfully updated instructor data whose id = "+ id;
             }
-            else{
-                return null;
-            }
-
+            return "No instructor found with ID"+id+"to update";
         }
-        catch(Exception exception){
-            logger.error(String.valueOf(exception));
+        catch(SQLException exception){
+            throw new ResourceNotFoundException(String.valueOf(exception));
         }
-        return null;
     }
 
     public String updateInstructor(Instructor instructor){
         PreparedStatement preparedStatement;
+        ResultSet resultset = findInstructorById(instructor.getInstructorId());
         try{
-            ResultSet resultset = findInstructorById(instructor.getInstructorId());
             if(resultset.next()){
                 String query="update instructor_table " +
                         "set instructor_name=?, contact=? " +
@@ -106,15 +106,11 @@ public class InstructorDao {
                 preparedStatement.executeUpdate(query);
                 return "Successfully updated instructor data whose id = "+ instructor.getInstructorId();
             }
-            else{
-                return null;
-            }
-
+            return "No instructor found with ID"+instructor.getInstructorId()+"to update";
         }
-        catch(Exception exception){
-            logger.error(String.valueOf(exception));
+        catch(SQLException exception){
+            throw new ResourceNotFoundException(String.valueOf(exception));
         }
-        return null;
     }
     public void replaceInstructor(Connection connection,int id, String name, long contact){
         Statement statement;
@@ -140,19 +136,19 @@ public class InstructorDao {
             logger.error(String.valueOf(exception));
         }
     }
-    public int deleteInstructorById(int id) {
+    public String deleteInstructorById(int id) {
+        ResultSet resultset = findInstructorById(id);
         try {
-            String query = "Delete from instructor_table where instructor_id = " + id;
-
-            Statement statement = connection.createStatement();
-            statement.executeUpdate(query);
-            return 1;
+            if (resultset.next()) {
+                String query = "Delete from instructor_table where instructor_id = " + id;
+                Statement statement = connection.createStatement();
+                statement.executeUpdate(query);
+                return "Successfully deleted instructor data whose id = " + id;
+            }
+            return "No instructor found with ID"+id+"to delete";
         }
-        catch (Exception exception){
-            return 0;
+        catch(SQLException exception){
+            throw new ResourceNotFoundException(String.valueOf(exception));
         }
-
     }
-
-
 }

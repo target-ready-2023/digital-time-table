@@ -60,7 +60,7 @@ public class CourseService {
         return courseDao.updateCourse(course);
     }
 
-    public int deleteCourseById(int id) {
+    public String deleteCourseById(int id) {
         return courseDao.deleteCourseById(id);
     }
 }

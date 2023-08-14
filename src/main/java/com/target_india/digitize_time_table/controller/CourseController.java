@@ -61,13 +61,8 @@ public class CourseController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCourse(@PathVariable int id){
-        int deleted = courseService.deleteCourseById(id);
-        if(deleted == 1){
-
-            return new ResponseEntity<>("Successfully deleted course with ID="+id,HttpStatus.OK);
-        }
-
-        return new ResponseEntity<>("No course found with ID="+id+ "to delete",HttpStatus.NOT_FOUND);
+        String deleted = courseService.deleteCourseById(id);
+        return new ResponseEntity<>(deleted,HttpStatus.NOT_FOUND);
     }
 
 
