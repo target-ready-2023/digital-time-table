@@ -65,8 +65,8 @@ public class InstructorService {
         }
     }
 
-    public String addInstructor(Instructor instructor) {
-        instructorDao.addInstructor(instructor);
+    public String addInstructor(String name, String contact) {
+        instructorDao.addInstructor(name, contact);
         String result = "Successfully added instructor";
         return result;
     }

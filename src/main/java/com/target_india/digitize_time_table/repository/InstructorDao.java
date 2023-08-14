@@ -55,12 +55,12 @@ public class InstructorDao {
 
 
     //contact is already present?
-    public void addInstructor(Instructor instructor) {
+    public void addInstructor(String name, String contact) {
         String query = "insert into instructor_table(instructor_name,contact) values(?,?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(2,instructor.getInstructorContact());
-            preparedStatement.setString(1,instructor.getInstructorName());
+            preparedStatement.setString(2,contact);
+            preparedStatement.setString(1,name);
             preparedStatement.executeUpdate();
         }
         catch(SQLException exception){

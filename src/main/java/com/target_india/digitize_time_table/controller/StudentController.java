@@ -29,9 +29,9 @@ public class StudentController {
         return new ResponseEntity<>(studentService.getStudentById(id),HttpStatus.CREATED);
     }
 
-    @PostMapping
-    public ResponseEntity<String> addStudent(@RequestBody Student student) {
-        studentService.addStudent(student);
+    @PostMapping("/{name}/{class_id}/{contact}")
+    public ResponseEntity<String> addStudent(@PathVariable String name,@PathVariable(name="class_id") int id, @PathVariable String contact) {
+        studentService.addStudent(name,id,contact);
         return new ResponseEntity<>("Student added successfully", HttpStatus.CREATED);
     }
 

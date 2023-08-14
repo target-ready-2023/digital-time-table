@@ -1,6 +1,7 @@
 package com.target_india.digitize_time_table.controller;
 
 import com.target_india.digitize_time_table.model.Course;
+import com.target_india.digitize_time_table.model.CourseInfo;
 import com.target_india.digitize_time_table.service.CourseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,11 +10,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 
 @RestController
-@RequestMapping("courses/{class_id}")
+@RequestMapping("courses")
 public class CourseController {
     private static final Logger logger = LoggerFactory.getLogger(CourseController.class);
     private final CourseService courseService;
@@ -24,15 +26,13 @@ public class CourseController {
     }
 
 
+    @GetMapping("/{class_id}")
+    public ResponseEntity<List<CourseInfo>> getAllCoursesOfClass(@PathVariable(name="class_id") int classId){
+        return new ResponseEntity<>(courseService.getCourseByClassId(classId), HttpStatus.CREATED);
+    }
     @GetMapping
-    public ResponseEntity<String> getCoursesByClassId(@PathVariable(name = "class_id") int classId){
-        Optional<String> courseList =courseService.getCourseByClassId(classId);
-        if(courseList.isEmpty()){
-            logger.error("No course data found for class ID={}",classId);
-            return new ResponseEntity<>("No course data found for class ID={}"+classId,HttpStatus.NOT_FOUND);
-        }
-        logger.info("course info fetched successfully");
-        return ResponseEntity.of(Optional.of(String.valueOf(courseList)));
+    public ResponseEntity<List<CourseInfo>> getAllCourses(){
+        return new ResponseEntity<>(courseService.getAllCourses(), HttpStatus.CREATED);
     }
 
     @PostMapping
