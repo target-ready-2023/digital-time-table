@@ -2,6 +2,7 @@ package com.target_india.digitize_time_table.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target_india.digitize_time_table.config.DbSettings;
+import com.target_india.digitize_time_table.exceptions.ResourceNotFoundException;
 import com.target_india.digitize_time_table.model.Admin;
 import com.target_india.digitize_time_table.model.ClassInfo;
 import com.target_india.digitize_time_table.model.Student;
@@ -24,9 +25,8 @@ public class AdminService {
         this.adminDao=adminDao;
     }
 
-    public Optional<String> getAllAdmins() {
-        try {
-            ResultSet resultSet = adminDao.findAllAdmins();
+    public List<Admin> getAllAdmins() {
+        try (ResultSet resultSet = adminDao.findAllAdmins();){
             List<Admin> admins = new ArrayList<Admin>();
             while (resultSet.next()) {
                 int id = resultSet.getInt("admin_id");
@@ -36,18 +36,17 @@ public class AdminService {
                 admins.add(admin);
             }
             if (admins.isEmpty()) {
-                return Optional.empty();
+                throw new ResourceNotFoundException("No data found");
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jacksonData = objectMapper.writeValueAsString(admins);
-            return Optional.of(jacksonData);
+
+            return admins;
         }
         catch(Exception exception){
-            return Optional.empty();
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 
-    public Optional<String> getAdminById(int id) {
+    public Admin getAdminById(int id) {
         try {
             ResultSet resultSet = adminDao.findAdminById(id);
             Admin admin = new Admin();
@@ -56,14 +55,13 @@ public class AdminService {
                 admin.setAdminName(resultSet.getString(2));
                 admin.setAdminContact(resultSet.getString(3));
             } else {
-                return Optional.empty();
+                throw new ResourceNotFoundException("No admin found with id: "+id);
             }
-            ObjectMapper objectMapper = new ObjectMapper();
-            String jacksonData = objectMapper.writeValueAsString(admin);
-            return Optional.of(jacksonData);
+
+            return admin;
         }
         catch(Exception exception){
-            return Optional.empty();
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 }

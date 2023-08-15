@@ -1,4 +1,5 @@
 package com.target_india.digitize_time_table.controller;
+import com.target_india.digitize_time_table.model.Admin;
 import com.target_india.digitize_time_table.model.Instructor;
 import com.target_india.digitize_time_table.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,10 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
 import java.util.Optional;
 
 @RestController
 @RequestMapping("admins")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AdminController {
     private final AdminService adminService;
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
@@ -23,25 +27,13 @@ public class AdminController {
     }
 
     @GetMapping
-    public ResponseEntity<String> getAllAdmins(){
-        Optional<String> admins = adminService.getAllAdmins();
-        if (admins.isEmpty()) {
-            logger.error("No admin data found");
-            return new ResponseEntity<>("No data found",HttpStatus.NOT_FOUND);
-        }
-        logger.info("admin data fetched successfully");
-        return new ResponseEntity<>(String.valueOf(Optional.of(admins)), HttpStatus.CREATED);
+    public ResponseEntity<List<Admin>> getAllAdmins(){
+        return new ResponseEntity<>(adminService.getAllAdmins(),HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getAdminById(@PathVariable int id){
-        Optional<String> admin = adminService.getAdminById(id);
-        if (admin.isEmpty()){
-            logger.error("No data found for admin with ID="+id);
-            return new ResponseEntity<>("No data found for admin with ID="+id,HttpStatus.NOT_FOUND);
-        }
-        logger.info("admin data fetched successfully with id ="+id);
-        return new ResponseEntity<>(String.valueOf(Optional.of(admin)),HttpStatus.CREATED);
+    public ResponseEntity<Admin> getAdminById(@PathVariable int id){
+        return new ResponseEntity<>(adminService.getAdminById(id),HttpStatus.OK);
     }
 
 
