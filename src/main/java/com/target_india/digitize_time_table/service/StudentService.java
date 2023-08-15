@@ -63,8 +63,8 @@ public class StudentService {
         }
     }
 
-    public String addStudent(Student student) {
-        studentDao.addStudent(student);
+    public String addStudent(String name, int id, String contact) {
+        studentDao.addStudent(name, id, contact);
         return "Successfully added student";
 
     }

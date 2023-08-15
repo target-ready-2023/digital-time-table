@@ -56,14 +56,14 @@ public class StudentDao {
     }
 
 
-    public void addStudent(Student student) {
+    public void addStudent(String name, int id, String contact) {
         String query = "insert into student_table(student_name,class_id,student_contact) values(?,?,?)";
         try {
 
             PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1,student.getStudentName());
-            preparedStatement.setInt(2,student.getClassId());
-            preparedStatement.setString(3,student.getStudentContact());
+            preparedStatement.setString(1,name);
+            preparedStatement.setInt(2,id);
+            preparedStatement.setString(3,contact);
             preparedStatement.executeUpdate();
         }
         catch(SQLException exception){

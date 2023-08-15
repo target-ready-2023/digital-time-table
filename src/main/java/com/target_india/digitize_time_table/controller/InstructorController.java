@@ -34,9 +34,10 @@ public class InstructorController {
         return new ResponseEntity<>(instructorService.getInstructorById(id),HttpStatus.CREATED);
     }
 
-    @PostMapping
-    public ResponseEntity<String> addInstructor( @RequestBody Instructor instructor) {
-        instructorService.addInstructor(instructor);
+    @PostMapping("/{name}/{contact}")
+    public ResponseEntity<String> addInstructor( @PathVariable String name, @PathVariable String contact) {
+        System.out.println(name+contact);
+        instructorService.addInstructor(name, contact);
         return new ResponseEntity<>("Instructor added successfully", HttpStatus.CREATED);
     }
 
