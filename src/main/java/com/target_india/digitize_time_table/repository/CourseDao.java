@@ -75,7 +75,7 @@ public class CourseDao {
     }
 
     public void addCourse(Course course) {
-        String query = "insert into course_table(course_id,course_name,class_id,instructor_id) values(?,?,?,?)";
+        String query = "insert into course_table(course_name,class_id,instructor_id) values(?,?,?)";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setInt(1,course.getCourseId());

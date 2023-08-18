@@ -1,9 +1,7 @@
 package com.target_india.digitize_time_table.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.target_india.digitize_time_table.exceptions.ResourceNotFoundException;
 import com.target_india.digitize_time_table.model.ClassInfo;
-import com.target_india.digitize_time_table.repository.AdminDao;
 import com.target_india.digitize_time_table.repository.ClassDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,7 +34,7 @@ public class ClassService {
             }
             throw new ResourceNotFoundException( "No class found with id: "+id );
         } catch (SQLException exception) {
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 
@@ -58,8 +56,37 @@ public class ClassService {
             }
             return classes_info;
         } catch (SQLException exception) {
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 
+    public ClassInfo getClassById(int id) {
+        ResultSet resultSet = classDao.findClassById(id);
+        ClassInfo classInfo = new ClassInfo();
+        try {
+            if (resultSet.next()) {
+                classInfo.setClassId(resultSet.getInt(1));
+                classInfo.setClassName(resultSet.getInt(2));
+                classInfo.setClassSection(resultSet.getString(3));
+                classInfo.setClassStrength(resultSet.getInt(4));
+                return classInfo;
+            }
+            throw new ResourceNotFoundException( "No class found with id: "+id );
+        }
+        catch(SQLException exception){
+            throw new ResourceNotFoundException(exception.getMessage());
+        }
+    }
+    public String addClass(int className, String section, int strength) {
+        classDao.addClass(className, section, strength);
+        return "Successfully added class";
+    }
+    public String updateClassStrength(int classId, int strength){
+        return classDao.updateClassStrength(classId,strength);
+    }
+
+
+    public String deleteClassById(int id) {
+        return classDao.deleteClassById(id);
+    }
 }

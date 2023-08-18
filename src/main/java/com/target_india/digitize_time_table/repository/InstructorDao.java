@@ -36,10 +36,24 @@ public class InstructorDao {
             resultSet = preparedStatement.executeQuery();
             return resultSet;
         }catch (SQLException exception) {
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
         }
         return resultSet;
     }
+    public ResultSet findInstructorByContact(String contact) {
+        ResultSet resultSet = null;
+        String query = "select * from instructor_table where contact = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, contact);
+            resultSet = preparedStatement.executeQuery();
+            return resultSet;
+        }catch (SQLException exception) {
+            logger.error(exception.getMessage());
+        }
+        return resultSet;
+    }
+
     public ResultSet findAllInstructors() {
         ResultSet resultSet = null;
         try {
@@ -48,7 +62,7 @@ public class InstructorDao {
             resultSet = statement.executeQuery(query);
             return resultSet;
         } catch (SQLException exception) {
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
         }
         return resultSet;
     }
@@ -57,14 +71,17 @@ public class InstructorDao {
     //contact is already present?
     public void addInstructor(String name, String contact) {
         String query = "insert into instructor_table(instructor_name,contact) values(?,?)";
-        try {
+        try(ResultSet rs = findInstructorByContact(contact)){
+            if(rs.next()){
+                throw new ResourceAlreadyExistException("This contact already exists!");
+            }
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(2,contact);
             preparedStatement.setString(1,name);
             preparedStatement.executeUpdate();
         }
         catch(SQLException exception){
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
         }
     }
 
@@ -73,7 +90,8 @@ public class InstructorDao {
         ResultSet resultSet = findInstructorById(id);
         try{
             if(resultSet.next()){
-                if(resultSet.getString("contact").equals(contact)){
+                ResultSet rs = findInstructorByContact(contact);
+                if(rs.next() && rs.getInt("student_id") != id){
                     throw new ResourceAlreadyExistException("This contact already exists!");
                 }
                 String query="update instructor_table " +
@@ -87,7 +105,7 @@ public class InstructorDao {
             return "No instructor found with ID"+id+"to update";
         }
         catch(SQLException exception){
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 
@@ -109,7 +127,7 @@ public class InstructorDao {
             return "No instructor found with ID"+instructor.getInstructorId()+"to update";
         }
         catch(SQLException exception){
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
     public void replaceInstructor(Connection connection,int id, String name, long contact){
@@ -133,7 +151,7 @@ public class InstructorDao {
             statement.executeUpdate(query);
         }
         catch(Exception exception){
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
         }
     }
     public String deleteInstructorById(int id) {
@@ -148,7 +166,7 @@ public class InstructorDao {
             return "No instructor found with ID"+id+"to delete";
         }
         catch(SQLException exception){
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 }

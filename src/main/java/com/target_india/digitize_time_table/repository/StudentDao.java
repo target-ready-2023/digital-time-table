@@ -37,7 +37,20 @@ public class StudentDao {
             resultSet = preparedStatement.executeQuery();
             return resultSet;
         }catch (SQLException exception) {
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
+        }
+        return resultSet;
+    }
+    public ResultSet findStudentByContact(String contact) {
+        ResultSet resultSet = null;
+        String query = "select * from student_table where student_contact = ?";
+        try {
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, contact);
+            resultSet = preparedStatement.executeQuery();
+            return resultSet;
+        }catch (SQLException exception) {
+            logger.error(exception.getMessage());
         }
         return resultSet;
     }
@@ -50,7 +63,7 @@ public class StudentDao {
             resultSet = statement.executeQuery(query);
             return resultSet;
         } catch (SQLException exception) {
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
         }
         return resultSet;
     }
@@ -58,8 +71,11 @@ public class StudentDao {
 
     public void addStudent(String name, int id, String contact) {
         String query = "insert into student_table(student_name,class_id,student_contact) values(?,?,?)";
-        try {
 
+        try(ResultSet rs = findStudentByContact(contact)) {
+            if(rs.next()){
+                throw new ResourceAlreadyExistException("This contact already exists!");
+            }
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1,name);
             preparedStatement.setInt(2,id);
@@ -67,13 +83,13 @@ public class StudentDao {
             preparedStatement.executeUpdate();
         }
         catch(SQLException exception){
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
         }
     }
     public String updateStudent(Student student) {
         PreparedStatement preparedStatement;
-        ResultSet resultset = findStudentById(student.getStudentId());
-        try{
+
+        try(ResultSet resultset = findStudentById(student.getStudentId())){
             if(resultset.next()){
                 String query="update student_table " +
                         "set student_name=?, class_id = ?, student_contact=? " +
@@ -92,18 +108,19 @@ public class StudentDao {
 
         }
         catch(Exception exception){
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
         }
         return null;
     }
 
 
+
     public String updateStudent(int id, String name, int classId, String contact) {
         Statement statement;
-        ResultSet resultSet = findStudentById(id);
-        try{
+        try(ResultSet resultSet = findStudentById(id)){
             if(resultSet.next()){
-                if(resultSet.getString("student_contact").equals(contact)){
+                ResultSet rs = findStudentByContact(contact);
+                if(rs.next() && rs.getInt("student_id") != id){
                     throw new ResourceAlreadyExistException("This contact already exists!");
                 }
                 String query="update student_table " +
@@ -114,16 +131,14 @@ public class StudentDao {
                 return "Successfully updated student data whose id = "+ id;
             }
             throw new ResourceNotFoundException("No student found with ID"+id+"to update");
-
         }
         catch(SQLException exception){
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 
     public String deleteStudentById(int id) {
-        ResultSet resultset = findStudentById(id);
-        try {
+        try(ResultSet resultset = findStudentById(id)) {
             if (resultset.next()) {
                 String query = "Delete from student_table where student_id = " + id;
                 Statement statement = connection.createStatement();
@@ -133,7 +148,7 @@ public class StudentDao {
             throw new ResourceNotFoundException("No student found with ID"+id+"to delete");
         }
         catch (SQLException exception){
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 }

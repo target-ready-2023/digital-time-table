@@ -41,7 +41,7 @@ public class StudentService {
             return students;
         }
         catch(SQLException exception){
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 
@@ -56,10 +56,10 @@ public class StudentService {
                 student.setStudentContact(resultSet.getString(4));
                 return student;
             }
-            throw new ResourceNotFoundException( "No instructor found with id: "+id );
+            throw new ResourceNotFoundException( "No student found with id: "+id );
         }
         catch(SQLException exception){
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 

@@ -14,7 +14,7 @@ public class DayOfWeekConverter {
 
     public String getDowFromDate(String dateString) throws Exception {
 
-        date = new SimpleDateFormat("dd-MM-yyyy").parse(dateString);
+        date = new SimpleDateFormat("yyyy-MM-dd").parse(dateString);
         calendar = Calendar.getInstance();
         calendar.setTime(date);
         //dow - monday or tuesday..

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Optional;
 
+
 @RestController
 @RequestMapping("admins")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -35,8 +36,4 @@ public class AdminController {
     public ResponseEntity<Admin> getAdminById(@PathVariable int id){
         return new ResponseEntity<>(adminService.getAdminById(id),HttpStatus.OK);
     }
-
-
-
-
 }

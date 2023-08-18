@@ -16,9 +16,6 @@ public class AdminDao{
 
     private static final Logger logger = LoggerFactory.getLogger(AdminDao.class);
     Connection connection;
-
-
-
     DbConnection dbConnection;
 
     AdminDao(){
@@ -40,7 +37,7 @@ public class AdminDao{
             resultSet = statement.executeQuery(query);
             return resultSet;
         } catch (SQLException exception) {
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
         }
         return resultSet;
     }
@@ -54,7 +51,7 @@ public class AdminDao{
             resultSet = preparedStatement.executeQuery();
             return resultSet;
         }catch (SQLException exception) {
-            logger.error(String.valueOf(exception));
+            logger.error(exception.getMessage());
         }
         return resultSet;
     }

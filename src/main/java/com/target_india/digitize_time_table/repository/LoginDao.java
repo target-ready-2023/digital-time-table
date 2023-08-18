@@ -42,7 +42,7 @@ public class LoginDao {
 
         }
         catch(SQLException exception){
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
     public int checkInstructorById(int id) {
@@ -56,7 +56,7 @@ public class LoginDao {
             }
         }
         catch(SQLException exception){
-            throw new ResourceNotFoundException( String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
     public int checkAdminById(int id) {
@@ -70,7 +70,7 @@ public class LoginDao {
             }
         }
         catch(SQLException exception){
-            throw new ResourceNotFoundException(String.valueOf(exception));
+            throw new ResourceNotFoundException(exception.getMessage());
         }
     }
 }

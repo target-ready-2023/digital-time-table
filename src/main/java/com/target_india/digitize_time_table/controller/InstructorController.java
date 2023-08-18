@@ -58,7 +58,7 @@ public class InstructorController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteInstructor(@PathVariable int id){
         String deleted = instructorService.deleteInstructorById(id);
-        return new ResponseEntity<>(deleted,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(deleted,HttpStatus.OK);
     }
 
 }

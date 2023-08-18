@@ -31,14 +31,12 @@ public class StudentController {
 
     @PostMapping("/{name}/{class_id}/{contact}")
     public ResponseEntity<String> addStudent(@PathVariable String name,@PathVariable(name="class_id") int id, @PathVariable String contact) {
-        studentService.addStudent(name,id,contact);
-        return new ResponseEntity<>("Student added successfully", HttpStatus.CREATED);
+        return new ResponseEntity<>(studentService.addStudent(name,id,contact), HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}/{name}/{class_id}/{contact}")
     public ResponseEntity<String> updateStudent(@PathVariable int id, @PathVariable String name, @PathVariable(name = "class_id") int classId, @PathVariable String contact) {
-        String result = studentService.updateStudent(id, name, classId, contact);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(studentService.updateStudent(id, name, classId, contact));
     }
 
     @PutMapping
@@ -51,8 +49,7 @@ public class StudentController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteStudent(@PathVariable int id){
-        String deleted = studentService.deleteStudentById(id);
-        return new ResponseEntity<>(deleted,HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(studentService.deleteStudentById(id),HttpStatus.OK);
     }
 
 

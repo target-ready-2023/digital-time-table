@@ -26,8 +26,8 @@ public class AdminService {
     }
 
     public List<Admin> getAllAdmins() {
-        try (ResultSet resultSet = adminDao.findAllAdmins();){
-            List<Admin> admins = new ArrayList<Admin>();
+        try (ResultSet resultSet = adminDao.findAllAdmins()){
+            List<Admin> admins = new ArrayList<>();
             while (resultSet.next()) {
                 int id = resultSet.getInt("admin_id");
                 String name = resultSet.getString("admin_name");
@@ -47,8 +47,7 @@ public class AdminService {
     }
 
     public Admin getAdminById(int id) {
-        try {
-            ResultSet resultSet = adminDao.findAdminById(id);
+        try(ResultSet resultSet = adminDao.findAdminById(id)){
             Admin admin = new Admin();
             if (resultSet.next()) {
                 admin.setAdminId(resultSet.getInt(1));
@@ -57,7 +56,6 @@ public class AdminService {
             } else {
                 throw new ResourceNotFoundException("No admin found with id: "+id);
             }
-
             return admin;
         }
         catch(Exception exception){
