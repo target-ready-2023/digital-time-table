@@ -47,8 +47,9 @@ public class CourseDao {
     public ResultSet findAllCourses() {
         ResultSet resultSet = null;
         String query = "select course_table.course_id, course_table.course_name, " +
-                "course_table.class_id, instructor_table.instructor_name from course_table " +
-                "inner join instructor_table on course_table.instructor_id = instructor_table.instructor_id ";
+                "class_table.class, class_table.section, instructor_table.instructor_name from course_table " +
+                "inner join instructor_table on course_table.instructor_id = instructor_table.instructor_id " +
+                "inner join class_table on course_table.class_id = class_table.class_id";
         try {
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             resultSet = preparedStatement.executeQuery();

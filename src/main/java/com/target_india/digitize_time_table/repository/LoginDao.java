@@ -11,14 +11,23 @@ import java.sql.*;
 
 @Repository
 public class LoginDao {
+
+
     private static final Logger logger = LoggerFactory.getLogger(LoginDao.class);
     Connection connection;
     DbConnection dbConnection;
 
-    private final StudentDao studentDao;
-    private final InstructorDao instructorDao;
-    private final AdminDao adminDao;
+    private StudentDao studentDao;
+    private InstructorDao instructorDao;
+    private AdminDao adminDao;
 
+
+    public LoginDao(Connection connection){
+        this.connection=connection;
+        dbConnection = new DbConnection();
+        connection = dbConnection.getDbConnection();
+        logger.info("Opened database successfully");
+    }
     @Autowired
     LoginDao(StudentDao studentDao, InstructorDao instructorDao, AdminDao adminDao){
         this.studentDao = studentDao;
